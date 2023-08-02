@@ -1,0 +1,9 @@
+# Images
+*.tiff
+
+# Weights
+*.h5
+
+# Outputs
+*.npy
+*.tar.xz

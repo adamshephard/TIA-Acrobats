@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 4 ]; then
+    echo "Usage: register PATH_TABLE_CSV, PATH_IMAGES_DIR, PATH_ANNOT_DIR, PATH_OUTPUT_DIR"
+    echo "    PATH_TABLE_CSV: path to a csv file containing full list of the dataset to register"
+    echo "    PATH_IMAGES_DIR: path to images directory"
+    echo "    PATH_ANNOT_DIR: path to annotations directory"
+    echo "    PATH_OUTPUT_DIR: path to output directory"
+    exit 1
+fi
+
+# call your dockerized registration method here, read PATH_TABLE_CSV and
+# register files denoted by columns 'wsi_source' and 'wsi_target'.
+# Save the results to directory pointed by column 'output_dir'.
+
+docker run tia-acrobats-algorithm PATH_TABLE_CSV PATH_IMAGES_DIR PATH_ANNOT_DIR PATH_OUTPUT_DIR
+
+# apply the same transformations to landmarks pointed by column
+# 'landmarks_csv' and save the results in 'path_output'.
+
+
+# "PATH_TABLE_CSV" contains only filenames (or relative paths). To get the full
+# absolute paths, combine directory paths PATH_IMAGES_DIR, PATH_ANNOT_DIR and
+# PATH_OUTPUT_DIR with entries from the PATH_TABLE_CSV. 
+# Examples:
+# source_image=$PATH_IMAGES_DIR/'wsi_source' (where 'wsi_source' is read from the csv file)
+# target_image=$PATH_IMAGES_DIR/'wsi_target' (where 'wsi_target' is read from the csv file)
+# landmarks=$PATH_ANNOT_DIR/'landmarks_csv' (where 'landmarks_csv' is read from the csv file)
+# output=$PATH_OUTPUT_DIR/'output_dir_name' (where 'output_dir_name' is read from the csv file)
+
+echo "registration complete"
+
