@@ -100,7 +100,7 @@ class ACROBATICS(object):
     def __init__(self, input_registration_info="/data/ACROBAT/data/valid_data/validation_set_table.csv",
                        image_folder="/data/ACROBAT/data/valid_data/images/",#'/input/images/',
                        anno_folder="/data/ACROBAT/data/valid_data/annos/",#'/input/images/',
-                       output_folder="/data/ACROBAT/output/valid/",#'/output/'):
+                       output_folder="/data/ACROBAT/output4/valid/",#'/output/'):
                        resolution=1.25):
         
         self.input_info = input_registration_info
@@ -119,9 +119,9 @@ class ACROBATICS(object):
         # Loop through each image in the input folder (must be tif)
         for _, info in info_df.iterrows():
             moving_path = os.path.join(self.input_images, info['wsi_source'])
-            moving_path = moving_path.replace('.tiff', '.tif')
+            moving_path = moving_path.replace('.tiff', '.tif') # remember to remove on testing!
             fixed_path = os.path.join(self.input_images, info['wsi_target'])
-            fixed_path = fixed_path.replace('.tiff', '.tif')
+            fixed_path = fixed_path.replace('.tiff', '.tif') # remember to remove on testing!
             landmarks_csv = os.path.join(self.input_annos, info['landmarks_csv'])
             output_dir = os.path.join(self.output_folder, str(info['output_dir_name']))   
 
