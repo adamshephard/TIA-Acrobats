@@ -94,13 +94,11 @@ def delete_tmp_files(tmp_folder):
 
 
 class ACROBATICS(object):
-    
-    # Change below to take input as CSV file...
-    
-    def __init__(self, input_registration_info="/data/ACROBAT/data/valid_data/validation_set_table.csv",
-                       image_folder="/data/ACROBAT/data/valid_data/images/",#'/input/images/',
-                       anno_folder="/data/ACROBAT/data/valid_data/annos/",#'/input/images/',
-                       output_folder="/data/ACROBAT/output/valid/",#'/output/'):
+       
+    def __init__(self, input_registration_info="/input/input_table.csv",
+                       image_folder="/input/images/",
+                       anno_folder="/input/annos/",
+                       output_folder="/output/",
                        resolution=1.25):
         
         self.input_info = input_registration_info
@@ -114,7 +112,7 @@ class ACROBATICS(object):
         """INIT"""
 
         info_df = pd.read_csv(self.input_info)
-        info_df = info_df.head(3).tail(1)
+        # info_df = info_df.head(3).tail(1)
 
         # Loop through each image in the input folder (must be tif)
         for _, info in info_df.iterrows():
@@ -138,7 +136,8 @@ class ACROBATICS(object):
                 print('Finished Registration')
                 print('Start CSV Registration')
                 run_landmark_registration(landmarks_csv, moving_path, intermediate_output_folder, output_dir, out_res=self.resolution)
-
+                shutil.rmtree(intermediate_output_folder)
+                print('Finished CSV Registration')
             except Exception as e:
                 print("Exception")
                 print(e)

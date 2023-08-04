@@ -13,11 +13,30 @@ fi
 # register files denoted by columns 'wsi_source' and 'wsi_target'.
 # Save the results to directory pointed by column 'output_dir'.
 
-docker run tia-acrobats-algorithm PATH_TABLE_CSV PATH_IMAGES_DIR PATH_ANNOT_DIR PATH_OUTPUT_DIR
+PATH_TABLE_CSV="$1"
+PATH_IMAGES_DIR="$2"
+PATH_ANNOT_DIR="$3"
+PATH_OUTPUT_DIR="$4"
+
+# docker import tia-acrobats-algorithm.tar.xz tia-acrobats
+docker run -it \
+    --gpus all \
+    -v $PATH_IMAGES_DIR:/input/images \
+    -v $PATH_ANNOT_DIR:/input/annos \
+    -v $PATH_OUTPUT_DIR:/output \
+    -v $PATH_TABLE_CSV:/input/input_table.csv \
+    tia-acrobats
+    
+# docker run -it \ 
+#     --gpus all \
+#     -v $PATH_IMAGES_DIR:/input/images \
+#     -v $PATH_ANNOT_DIR:/input/annos \
+#     -v $PATH_OUTPUT_DIR:/output \
+#     -v $PATH_TABLE_CSV:/input/input_table.csv \
+#     tia-acrobats /bin/bash 
 
 # apply the same transformations to landmarks pointed by column
 # 'landmarks_csv' and save the results in 'path_output'.
-
 
 # "PATH_TABLE_CSV" contains only filenames (or relative paths). To get the full
 # absolute paths, combine directory paths PATH_IMAGES_DIR, PATH_ANNOT_DIR and

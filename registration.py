@@ -91,9 +91,9 @@ def registration(moving_image_path, fixed_image_path, intermediate_path, output_
     # imwrite(os.path.join(output_path, f"{moving_name}_registered.tiff"), out_dfbr_registered_image)
     imwrite(os.path.join(output_path, f"registered_source_image.tiff"), out_dfbr_registered_image)
 
-    temp = np.repeat(np.expand_dims(out_dfbr_registered_mask, axis=2), 3, axis=2)*255
+    # temp = np.repeat(np.expand_dims(out_dfbr_registered_mask, axis=2), 3, axis=2)*255
     # imwrite(os.path.join(output_path, f"{moving_name}_registered_mask.tiff"), temp)
-    imwrite(os.path.join(output_path, f"registered_source_mask.tiff"), temp)
+    # imwrite(os.path.join(output_path, f"registered_source_mask.tiff"), temp)
     
     # Save transformation matrix to csv
     np.savetxt(os.path.join(intermediate_path, "transform.csv"), dfbr_transform_upscaled, delimiter=",")

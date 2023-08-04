@@ -17,7 +17,14 @@ RUN : \
     && apt-get install build-essential -y \
     && apt-get clean \
     && :
-    
+
+# Get other packages
+RUN apt-get install -y gcc
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+RUN apt-get update && apt-get install -y libopenjp2-7-dev libopenjp2-tools openslide-tools
+RUN apt-get update && apt-get install -y python3-opencv
+RUN apt-get update && apt-get install -y libpixman-1-dev
+
 # Add env to PATH
 RUN python3.8 -m venv /venv
 ENV PATH=/venv/bin:$PATH
@@ -36,13 +43,14 @@ RUN pip install click
 # RUN apt install nvidia-modprobe -y
 
 # FOLDERS and PERMISSIONS
+USER root
 RUN groupadd -r algorithm && useradd -m --no-log-init -r -g algorithm algorithm
 
-RUN mkdir -p /opt/algorithm /input /output /tempoutput \
+RUN mkdir -p /opt/algorithm /input /output /input/images /input/annos \
     /configs \
-    && chown algorithm:algorithm /opt/algorithm /input /output /tempoutput
+    && chown -R algorithm:algorithm /opt/algorithm /input /output \
+    /input/images /input/annos
 
-USER algorithm
 WORKDIR /opt/algorithm
 ENV PATH="/home/algorithm/.local/bin:${PATH}"
 
@@ -52,9 +60,7 @@ COPY --chown=algorithm:algorithm tissue_segmentation.py /opt/algorithm/
 COPY --chown=algorithm:algorithm registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm landmark_registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm utils.py /opt/algorithm/
-# COPY --chown=algorithm:algorithm testinput /input/
-# COPY --chown=algorithm:algorithm testinput/images /input/images/
-# COPY --chown=algorithm:algorithm testinput/annos /input/annos/
-# COPY --chown=algorithm:algorithm testinput/registration_table.csv /input/
 
-ENTRYPOINT python -u -m main $0 $@s
+# ENTRYPOINT python -u -m main $0 $@s
+ENTRYPOINT ["python", "./main.py"]
+# ENTRYPOINT ["/bin/bash", "-c"]
