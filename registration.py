@@ -2,22 +2,15 @@ import gc
 
 from pathlib import Path
 import click
-import shutil
 
-from tiatoolbox.models.engine.semantic_segmentor import SemanticSegmentor
-from tiatoolbox.tools.registration.wsi_registration import (
-    DFBRegister,
-    match_histograms,
-)
+from wsi_registration_local import DFBRegister
 from tiatoolbox.wsicore.wsireader import WSIReader
 from tiatoolbox.utils.misc import imread, imwrite 
 import os
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib as mpl
 
-from utils import preprocess_image, post_processing_mask
 
 @click.command()
 @click.option("--moving_image_path", type=Path, required=True)

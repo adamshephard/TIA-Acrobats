@@ -100,7 +100,7 @@ class ACROBATICS(object):
     def __init__(self, input_registration_info="/data/ACROBAT/data/valid_data/validation_set_table.csv",
                        image_folder="/data/ACROBAT/data/valid_data/images/",#'/input/images/',
                        anno_folder="/data/ACROBAT/data/valid_data/annos/",#'/input/images/',
-                       output_folder="/data/ACROBAT/output4/valid/",#'/output/'):
+                       output_folder="/data/ACROBAT/output/valid/",#'/output/'):
                        resolution=1.25):
         
         self.input_info = input_registration_info

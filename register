@@ -18,7 +18,7 @@ PATH_IMAGES_DIR="$2"
 PATH_ANNOT_DIR="$3"
 PATH_OUTPUT_DIR="$4"
 
-# docker import tia-acrobats-algorithm.tar.xz tia-acrobats
+docker load -i tia-acrobats-algorithm.tar.xz
 docker run -it \
     --gpus all \
     -v $PATH_IMAGES_DIR:/input/images \
@@ -26,8 +26,8 @@ docker run -it \
     -v $PATH_OUTPUT_DIR:/output \
     -v $PATH_TABLE_CSV:/input/input_table.csv \
     tia-acrobats
-    
-# docker run -it \ 
+
+# docker run -it \
 #     --gpus all \
 #     -v $PATH_IMAGES_DIR:/input/images \
 #     -v $PATH_ANNOT_DIR:/input/annos \

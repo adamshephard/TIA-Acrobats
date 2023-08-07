@@ -6,7 +6,7 @@ import gc
 
 from tiatoolbox.models.engine.semantic_segmentor import SemanticSegmentor
 from tiatoolbox.utils.misc import imwrite
-from tiatoolbox.tools.registration.wsi_registration import match_histograms
+from wsi_registration_local import match_histograms
 from tiatoolbox.wsicore.wsireader import WSIReader
 
 import numpy as np

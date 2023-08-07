@@ -60,6 +60,8 @@ COPY --chown=algorithm:algorithm tissue_segmentation.py /opt/algorithm/
 COPY --chown=algorithm:algorithm registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm landmark_registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm utils.py /opt/algorithm/
+COPY --chown=algorithm:algorithm wsi_registration_local.py /opt/algorithm/
+
 
 # ENTRYPOINT python -u -m main $0 $@s
 ENTRYPOINT ["python", "./main.py"]
