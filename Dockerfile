@@ -1,7 +1,7 @@
-FROM nvidia/cuda:11.2.0-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04
 
 RUN rm /etc/apt/sources.list.d/cuda.list
-RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+RUN rm -f /etc/apt/sources.list.d/nvidia-ml.list
 
 ENV TZ=Europe/London
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -61,7 +61,7 @@ COPY --chown=algorithm:algorithm registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm landmark_registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm utils.py /opt/algorithm/
 COPY --chown=algorithm:algorithm wsi_registration_local.py /opt/algorithm/
-
+COPY --chown=algorithm:algorithm models/unet-acrobat.pth /opt/algorithm/models/
 
 # ENTRYPOINT python -u -m main $0 $@s
 ENTRYPOINT ["python", "./main.py"]

@@ -5,15 +5,18 @@ import shutil
 import gc
 
 from tiatoolbox.models.engine.semantic_segmentor import SemanticSegmentor
+from tiatoolbox.models.architecture.unet import UNetModel
 from tiatoolbox.utils.misc import imwrite
+import torch
 from wsi_registration_local import match_histograms
 from tiatoolbox.wsicore.wsireader import WSIReader
 
 import numpy as np
 from matplotlib import pyplot as plt
 
-from utils import preprocess_image, post_processing_mask
+from utils import preprocess_image, post_processing_mask, convert_pytorch_checkpoint
 
+unet_model_path = 'models/unet-acrobat.pth'
 
 @click.command()
 @click.option("--moving_image_path", type=Path, required=True)
@@ -31,7 +34,7 @@ def tissue_segmentation(moving_image_path, fixed_image_path, output_path, resolu
     # Preprocessing fixed and moving images
     fixed_image = preprocess_image(fixed_image_rgb)
     moving_image = preprocess_image(moving_image_rgb)
-    fixed_image, moving_image = match_histograms(fixed_image, moving_image)
+    # fixed_image, moving_image = match_histograms(fixed_image, moving_image)
 
     temp = np.repeat(np.expand_dims(fixed_image, axis=2), 3, axis=2)
     imwrite(os.path.join(output_path, f"{fixed_name}.png"), temp)
@@ -43,7 +46,13 @@ def tissue_segmentation(moving_image_path, fixed_image_path, output_path, resolu
     if os.path.exists(save_dir):
         shutil.rmtree(save_dir, ignore_errors=False, onerror=None)
 
+    pretrained = torch.load(unet_model_path, map_location='cpu')
+    pretrained = convert_pytorch_checkpoint(pretrained)
+    model = UNetModel(num_input_channels = 3, num_output_channels = 3)
+    model.load_state_dict(pretrained)
+
     segmentor = SemanticSegmentor(
+        model=model,
         pretrained_model="unet_tissue_mask_tsef",
         num_loader_workers=4,
         batch_size=4,
@@ -70,8 +79,8 @@ def tissue_segmentation(moving_image_path, fixed_image_path, output_path, resolu
     moving_mask = np.load(output[1][1] + ".raw.0.npy")
 
     # Simple processing of the raw prediction to generate semantic segmentation task
-    fixed_mask = np.argmax(fixed_mask, axis=-1) == 2
-    moving_mask = np.argmax(moving_mask, axis=-1) == 2
+    fixed_mask = np.argmax(fixed_mask, axis=-1) == 1 # 2
+    moving_mask = np.argmax(moving_mask, axis=-1) == 1 # 2
 
     fixed_mask = post_processing_mask(fixed_mask)
     moving_mask = post_processing_mask(moving_mask)

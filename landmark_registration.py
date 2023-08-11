@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 import pandas as pd
 
+format_for_val = True
 
 @click.command()
 @click.option("--landmarks_path", type=Path, required=True)
@@ -36,7 +37,8 @@ def landmark_registration(landmarks_path, moving_image_path, intermediate_path, 
     
     data = pd.read_csv(landmarks_path)
     
-    new_locations = pd.DataFrame(columns=['x_target', 'y_target'])
+    columns = ['anon_id', 'point_id', 'he_x', 'he_y'] if format_for_val else ['x_target', 'y_target']
+    new_locations = pd.DataFrame(columns=columns)
     # input x,y in microns --> convert to pixels in source res (*source_mpp)
     # then apply transform --> converts pixels to target res
     # then turn to microns --> convert to microns in target res (/target_mpp)
@@ -48,7 +50,13 @@ def landmark_registration(landmarks_path, moving_image_path, intermediate_path, 
         ds = mpp_target/mpp_source
         x_prime = (((trans[0][0]*x + trans[0][1]*y) / mpp_source) + trans[0][2]) * mpp_target
         y_prime = (((trans[1][0]*x + trans[1][1]*y) / mpp_source) + trans[1][2]) * mpp_target
-        new_locations.loc[idx] = [x_prime, y_prime]
+
+        anon_id = info['anon_id']
+        point_id = info['point_id']
+        if format_for_val:
+            new_locations.loc[idx] = [anon_id, point_id, x_prime, y_prime]
+        else: 
+            new_locations.loc[idx] = [x_prime, y_prime]
     
     # should be given in microns not pixels!
     

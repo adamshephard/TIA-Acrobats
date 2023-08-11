@@ -3,6 +3,7 @@
 
 # Weights
 *.h5
+*.pth
 
 # Outputs
 *.npy

@@ -11,6 +11,11 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
+# Disable logging at warning level
+import logging
+from tiatoolbox import logger
+logging.getLogger().setLevel(logging.CRITICAL)
+logger.setLevel(logging.CRITICAL)
 
 @click.command()
 @click.option("--moving_image_path", type=Path, required=True)
@@ -25,9 +30,9 @@ def registration(moving_image_path, fixed_image_path, intermediate_path, output_
     moving_name = os.path.basename(moving_image_path).split(".")[0]
 
     fixed_wsi_reader = WSIReader.open(input_img=fixed_image_path)
-    fixed_image_rgb = fixed_wsi_reader.slide_thumbnail(resolution=proc_res, units="power")
+    # fixed_image_rgb = fixed_wsi_reader.slide_thumbnail(resolution=proc_res, units="power")
     moving_wsi_reader = WSIReader.open(input_img=moving_image_path)
-    moving_image_rgb = moving_wsi_reader.slide_thumbnail(resolution=proc_res, units="power")
+    # moving_image_rgb = moving_wsi_reader.slide_thumbnail(resolution=proc_res, units="power")
 
     moving_image = imread(os.path.join(intermediate_path, f"{moving_name}.png"))[:,:,0]
     fixed_image = imread(os.path.join(intermediate_path, f"{fixed_name}.png"))[:,:,0]

@@ -12,7 +12,6 @@ import gc
 import subprocess
 import pandas as pd
 
-
 def print_std(p: subprocess.Popen):
 
     if p.stderr is not None:
@@ -92,7 +91,6 @@ def delete_tmp_files(tmp_folder):
         except Exception as e:
             print("Failed to delete %s. Reason: %s" % (file_path, e))
 
-
 class ACROBATICS(object):
        
     def __init__(self, input_registration_info="/input/input_table.csv",
@@ -117,9 +115,9 @@ class ACROBATICS(object):
         # Loop through each image in the input folder (must be tif)
         for _, info in info_df.iterrows():
             moving_path = os.path.join(self.input_images, info['wsi_source'])
-            moving_path = moving_path.replace('.tiff', '.tif')
+            # moving_path = moving_path.replace('.tiff', '.tif')
             fixed_path = os.path.join(self.input_images, info['wsi_target'])
-            fixed_path = fixed_path.replace('.tiff', '.tif')
+            # fixed_path = fixed_path.replace('.tiff', '.tif')
             landmarks_csv = os.path.join(self.input_annos, info['landmarks_csv'])
             output_dir = os.path.join(self.output_folder, str(info['output_dir_name']))   
 
