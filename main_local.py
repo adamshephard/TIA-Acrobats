@@ -27,7 +27,7 @@ def run_tissue_segmentation(moving_path, fixed_path, output_path, resolution=0.1
 
     print("Running tissue segmentation")
     cmd = [
-        "python3",
+        "/home/u2271662/miniconda3/envs/tia-02/bin/python",
         "-u",
         "-m",
         "tissue_segmentation",
@@ -46,7 +46,7 @@ def run_registration(moving_path, fixed_path, intermediate_path, output_path, pr
 
     print("running registration")
     cmd = [
-        "python3",
+        "/home/u2271662/miniconda3/envs/tia-02/bin/python",
         "-u",
         "-m",
         "registration",
@@ -66,7 +66,7 @@ def run_landmark_registration(landmarks_path, moving_image_path, intermediate_pa
 
     print("running landmark registration")
     cmd = [
-        "python3",
+        "/home/u2271662/miniconda3/envs/tia-02/bin/python",
         "-u",
         "-m",
         "landmark_registration",

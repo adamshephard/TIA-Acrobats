@@ -17,6 +17,8 @@ from matplotlib import pyplot as plt
 from utils import preprocess_image, post_processing_mask, convert_pytorch_checkpoint
 
 unet_model_path = 'models/unet-acrobat.pth'
+foreground_mask_class = 1
+artefact_mask_class = 2
 
 @click.command()
 @click.option("--moving_image_path", type=Path, required=True)
@@ -36,10 +38,8 @@ def tissue_segmentation(moving_image_path, fixed_image_path, output_path, resolu
     moving_image = preprocess_image(moving_image_rgb)
     # fixed_image, moving_image = match_histograms(fixed_image, moving_image)
 
-    temp = np.repeat(np.expand_dims(fixed_image, axis=2), 3, axis=2)
-    imwrite(os.path.join(output_path, f"{fixed_name}.png"), temp)
-    temp = np.repeat(np.expand_dims(moving_image, axis=2), 3, axis=2)
-    imwrite(os.path.join(output_path, f"{moving_name}.png"), temp)
+    imwrite(os.path.join(output_path, f"{fixed_name}.png"), fixed_image)
+    imwrite(os.path.join(output_path, f"{moving_name}.png"), moving_image)
 
     # tissue segmentation
     save_dir = os.path.join(output_path, "tissue_mask")
@@ -79,8 +79,14 @@ def tissue_segmentation(moving_image_path, fixed_image_path, output_path, resolu
     moving_mask = np.load(output[1][1] + ".raw.0.npy")
 
     # Simple processing of the raw prediction to generate semantic segmentation task
-    fixed_mask = np.argmax(fixed_mask, axis=-1) == 1 # 2
-    moving_mask = np.argmax(moving_mask, axis=-1) == 1 # 2
+    foreground_fixed_mask = np.argmax(fixed_mask, axis=-1) == foreground_mask_class 
+    foreground_moving_mask = np.argmax(moving_mask, axis=-1) == foreground_mask_class 
+    artefact_fixed_mask = np.argmax(fixed_mask, axis=-1) == artefact_mask_class
+    artefact_moving_mask = np.argmax(moving_mask, axis=-1) == artefact_mask_class
+    
+    # Combine foreground and artefact masks
+    fixed_mask = np.logical_or(foreground_fixed_mask, artefact_fixed_mask)
+    moving_mask = np.logical_or(foreground_moving_mask, artefact_moving_mask)
 
     fixed_mask = post_processing_mask(fixed_mask)
     moving_mask = post_processing_mask(moving_mask)

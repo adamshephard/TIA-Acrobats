@@ -27,12 +27,12 @@ def preprocess_image(image):
     """This function converts the RGB image to grayscale image and
     improves the contrast by linearly rescaling the values.
     """
-    image = color.rgb2gray(image)
-    image = exposure.rescale_intensity(
-        image, in_range=tuple(np.percentile(image, (0, 90)))
-    )
-    image = image * 255
-    return image.astype(np.uint8)
+    # image = color.rgb2gray(image)
+    # image = exposure.rescale_intensity(
+    #     image, in_range=tuple(np.percentile(image, (0, 90)))
+    # )
+    # image = image * 255
+    return image
 
 def post_processing_mask(mask):
     mask = ndimage.binary_fill_holes(mask, structure=np.ones((3, 3))).astype(int)

@@ -8,3 +8,6 @@
 # Outputs
 *.npy
 *.tar.xz
+
+# Bytecode
+*.pyc

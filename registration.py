@@ -34,14 +34,14 @@ def registration(moving_image_path, fixed_image_path, intermediate_path, output_
     moving_wsi_reader = WSIReader.open(input_img=moving_image_path)
     # moving_image_rgb = moving_wsi_reader.slide_thumbnail(resolution=proc_res, units="power")
 
-    moving_image = imread(os.path.join(intermediate_path, f"{moving_name}.png"))[:,:,0]
-    fixed_image = imread(os.path.join(intermediate_path, f"{fixed_name}.png"))[:,:,0]
-    moving_mask = imread(os.path.join(intermediate_path, f"{moving_name}_mask.png"))
-    fixed_mask = imread(os.path.join(intermediate_path, f"{fixed_name}_mask.png"))
+    moving_image = imread(os.path.join(intermediate_path, f"{moving_name}.png"))
+    fixed_image = imread(os.path.join(intermediate_path, f"{fixed_name}.png"))
+    moving_mask = imread(os.path.join(intermediate_path, f"{moving_name}_mask.png"))[:,:,0]
+    fixed_mask = imread(os.path.join(intermediate_path, f"{fixed_name}_mask.png"))[:,:,0]
 
     # Registration using DFBR
-    dfbr_fixed_image = np.repeat(np.expand_dims(fixed_image, axis=2), 3, axis=2)
-    dfbr_moving_image = np.repeat(np.expand_dims(moving_image, axis=2), 3, axis=2)
+    dfbr_fixed_image = fixed_image # np.repeat(np.expand_dims(fixed_image, axis=2), 3, axis=2)
+    dfbr_moving_image = moving_image # np.repeat(np.expand_dims(moving_image, axis=2), 3, axis=2)
 
     df = DFBRegister()
     dfbr_transform = df.register(
@@ -61,16 +61,16 @@ def registration(moving_image_path, fixed_image_path, intermediate_path, output_
     imwrite(os.path.join(intermediate_path, f"{moving_name}_registered.png"), dfbr_registered_image)
     imwrite(os.path.join(intermediate_path, f"{moving_name}_registered_mask.png"), dfbr_registered_mask)
 
-    before_overlay = np.dstack((original_moving, fixed_image, original_moving))
+    before_overlay = np.dstack((original_moving[:,:,0], fixed_image[:,:,0], original_moving[:,:,0]))
     imwrite(os.path.join(intermediate_path, f"{moving_name}_overlay_pre_registration.png"), before_overlay)
 
-    dfbr_overlay = np.dstack((dfbr_registered_image, fixed_image, dfbr_registered_image))
+    dfbr_overlay = np.dstack((dfbr_registered_image[:,:,0], fixed_image[:,:,0], dfbr_registered_image[:,:,0]))
     imwrite(os.path.join(intermediate_path, f"{moving_name}_overlay_post_registration.png"), dfbr_overlay)
 
     # Now get thumb at required resolution and warp/save
     out_moving_image_rgb = moving_wsi_reader.slide_thumbnail(resolution=out_res, units="power")
     out_fixed_image = fixed_wsi_reader.slide_thumbnail(resolution=out_res, units="power")
-    out_moving_mask = cv2.resize((moving_mask[:,:,0]/255).astype('uint8'), (out_moving_image_rgb.shape[1], out_moving_image_rgb.shape[0]), interpolation=cv2.INTER_NEAREST)
+    out_moving_mask = cv2.resize((moving_mask/255).astype('uint8'), (out_moving_image_rgb.shape[1], out_moving_image_rgb.shape[0]), interpolation=cv2.INTER_NEAREST)
     # out_fixed_mask = cv2.resize((fixed_mask[:,:,0]/255).astype('uint8'), (out_fixed_image.shape[1], out_fixed_image.shape[0]), interpolation=cv2.INTER_NEAREST)
 
     # scale the transform matrix to the desired resolution
