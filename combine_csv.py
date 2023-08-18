@@ -16,7 +16,9 @@ def combine_csv_files(csv_files, output_path=None):
     combined_csv = pd.concat([pd.read_csv(f, header=None, skiprows=1) for f in csv_files[:]])
     if output_path:
         # Export to csv
-        combined_csv.to_csv(output_path, index=False, header=False)
+        # Add header
+        header = ["anon_id","point_id","he_x","he_y"]
+        combined_csv.to_csv(output_path, index=False, header=header)
     else:
         return combined_csv
 

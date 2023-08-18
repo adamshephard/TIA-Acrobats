@@ -16,9 +16,11 @@ from matplotlib import pyplot as plt
 
 from utils import preprocess_image, post_processing_mask, convert_pytorch_checkpoint
 
-unet_model_path = 'models/unet-acrobat.pth'
+unet_model_path = 'models/unet-acrobat-v2-01.pth'
 foreground_mask_class = 1
 artefact_mask_class = 2
+exposure_percentile_fixed = (0, 99) # (0, 90)
+exposure_percentile_moving = (0, 90) # (0, 90)
 
 @click.command()
 @click.option("--moving_image_path", type=Path, required=True)
@@ -34,8 +36,8 @@ def tissue_segmentation(moving_image_path, fixed_image_path, output_path, resolu
     moving_image_rgb = moving_wsi_reader.slide_thumbnail(resolution=resolution, units="power")
 
     # Preprocessing fixed and moving images
-    fixed_image = preprocess_image(fixed_image_rgb)
-    moving_image = preprocess_image(moving_image_rgb)
+    fixed_image = preprocess_image(fixed_image_rgb, exposure_percentile=exposure_percentile_fixed)
+    moving_image = preprocess_image(moving_image_rgb, exposure_percentile=exposure_percentile_moving)
     # fixed_image, moving_image = match_histograms(fixed_image, moving_image)
 
     imwrite(os.path.join(output_path, f"{fixed_name}.png"), fixed_image)

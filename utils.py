@@ -23,16 +23,17 @@ def timing(f):
 
     return wrap
 
-def preprocess_image(image):
+def preprocess_image(image, exposure_percentile=(0, 90)):
     """This function converts the RGB image to grayscale image and
     improves the contrast by linearly rescaling the values.
     """
-    # image = color.rgb2gray(image)
-    # image = exposure.rescale_intensity(
-    #     image, in_range=tuple(np.percentile(image, (0, 90)))
-    # )
-    # image = image * 255
-    return image
+    image = color.rgb2gray(image)
+    image = exposure.rescale_intensity(
+        image, in_range=tuple(np.percentile(image, exposure_percentile))
+    )
+    image = image * 255
+    image = np.repeat(np.expand_dims(image, axis=2), 3, axis=2)
+    return image.astype(np.uint8)
 
 def post_processing_mask(mask):
     mask = ndimage.binary_fill_holes(mask, structure=np.ones((3, 3))).astype(int)
