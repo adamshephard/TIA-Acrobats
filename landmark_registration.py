@@ -68,20 +68,6 @@ def landmark_registration(landmarks_path, moving_image_path, fixed_image_path, i
     # create file with columns x_target, y_target and save to output_path (in microns)
     new_locations.to_csv(os.path.join(output_path, "registered_landmarks.csv"), index=False)
 
-    # Plot source landmarks on source image
-    for idx, info in data.iterrows():
-        x = info['x_source'] / (moving_base_mpp[0] * 2**moving_image_level[0][0])
-        y = info['y_source'] / (moving_base_mpp[1] * 2**moving_image_level[0][0])
-        moving_image_rgb = cv2.circle(moving_image_rgb, (int(x), int(y)), radius=5, color=(255, 0, 0), thickness=-1)
-    cv2.imwrite(os.path.join(output_path, "source_landmarks.png"), moving_image_rgb)
-    
-    # Plot registered landmarks on registered image
-    for idx, info in new_locations.iterrows():
-        x = info['he_x']
-        y = info['he_y']
-        moving_image_rgb = cv2.circle(moving_image_rgb, (int(x), int(y)), radius=50, color=(0, 0, 255), thickness=15)
-    cv2.imwrite(os.path.join(output_path, "registered_landmarks.png"), fixed_image_rgb)
-
     gc.collect() 
     print("Finished landmark registration!")
 
