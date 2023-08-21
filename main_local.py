@@ -62,7 +62,7 @@ def run_registration(moving_path, fixed_path, intermediate_path, output_path, pr
     print_std(p)
     
 @timing
-def run_landmark_registration(landmarks_path, moving_image_path, intermediate_path, output_path, out_res=1.25):
+def run_landmark_registration(landmarks_path, moving_image_path, fixed_image_path, intermediate_path, output_path, out_res=1.25):
 
     print("running landmark registration")
     cmd = [
@@ -72,6 +72,7 @@ def run_landmark_registration(landmarks_path, moving_image_path, intermediate_pa
         "landmark_registration",
         f"--landmarks_path={landmarks_path}",
         f"--moving_image_path={moving_image_path}",
+        f"--fixed_image_path={fixed_image_path}",
         f"--intermediate_path={intermediate_path}",
         f"--output_path={output_path}",
         f"--out_res={out_res}",
@@ -112,7 +113,7 @@ class ACROBATICS(object):
 
         """INIT"""
         info_df = pd.read_csv(self.input_info)
-        # info_df = info_df.head(8).tail(1)
+        info_df = info_df.head(3)
 
         # Loop through each image in the input folder (must be tif)
         for _, info in info_df.iterrows():
@@ -135,7 +136,7 @@ class ACROBATICS(object):
                 run_registration(moving_path, fixed_path, intermediate_output_folder, output_dir, out_res=self.resolution)   
                 print('Finished Registration')
                 print('Start CSV Registration')
-                run_landmark_registration(landmarks_csv, moving_path, intermediate_output_folder, output_dir, out_res=self.resolution)
+                run_landmark_registration(landmarks_csv, moving_path, fixed_path, intermediate_output_folder, output_dir, out_res=self.resolution)
 
             except Exception as e:
                 print("Exception")

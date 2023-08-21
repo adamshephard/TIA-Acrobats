@@ -39,6 +39,7 @@ RUN pip install tqdm
 RUN pip install matplotlib
 RUN pip install segmentation-models-pytorch
 RUN pip install click
+RUN pip install python3-opencv
 
 # RUN apt install nvidia-modprobe -y
 
@@ -61,7 +62,7 @@ COPY --chown=algorithm:algorithm registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm landmark_registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm utils.py /opt/algorithm/
 COPY --chown=algorithm:algorithm wsi_registration_local.py /opt/algorithm/
-COPY --chown=algorithm:algorithm models/unet-acrobat.pth /opt/algorithm/models/
+COPY --chown=algorithm:algorithm models/unet-acrobat-v3-01.pth /opt/algorithm/models/
 
 # ENTRYPOINT python -u -m main $0 $@s
 ENTRYPOINT ["python", "./main.py"]

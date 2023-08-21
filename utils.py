@@ -4,6 +4,7 @@ from functools import wraps
 from skimage import color, exposure, measure, morphology
 import numpy as np
 from scipy import ndimage
+import cv2
 
 # Disable logging at warning level
 import logging
@@ -23,15 +24,24 @@ def timing(f):
 
     return wrap
 
-def preprocess_image(image, exposure_percentile=(0, 90)):
+def preprocess_image(image, exposure_percentile=(0, 90), apply_adaptive_thresholding=False):
     """This function converts the RGB image to grayscale image and
     improves the contrast by linearly rescaling the values.
     """
-    image = color.rgb2gray(image)
-    image = exposure.rescale_intensity(
-        image, in_range=tuple(np.percentile(image, exposure_percentile))
-    )
-    image = image * 255
+    if apply_adaptive_thresholding:
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        output_threshold_value = 255
+        output_threshold_type = cv2.ADAPTIVE_THRESH_MEAN_C # cv2.ADAPTIVE_THRESH_GAUSSIAN_C
+        threshold_method = cv2.THRESH_BINARY
+        pixel_neighborhood = 91
+        finetune_constant = 3
+        image = cv2.adaptiveThreshold(image, output_threshold_value, output_threshold_type, threshold_method, pixel_neighborhood, finetune_constant)
+    else:
+        image = color.rgb2gray(image)
+        image = exposure.rescale_intensity(
+            image, in_range=tuple(np.percentile(image, exposure_percentile))
+        )
+        image = image * 255
     image = np.repeat(np.expand_dims(image, axis=2), 3, axis=2)
     return image.astype(np.uint8)
 

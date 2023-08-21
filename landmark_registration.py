@@ -15,18 +15,23 @@ format_for_val = True
 @click.command()
 @click.option("--landmarks_path", type=Path, required=True)
 @click.option("--moving_image_path", type=Path, required=True)
+@click.option("--fixed_image_path", type=Path, required=True)
 @click.option("--intermediate_path", type=Path, required=True)
 @click.option("--output_path", type=Path, required=True)
 @click.option("--out_res", type=float, default=1.25)
-def landmark_registration(landmarks_path, moving_image_path, intermediate_path, output_path, out_res=1.25):
+
+def landmark_registration(landmarks_path, moving_image_path, fixed_image_path, intermediate_path, output_path, out_res=1.25):
     """
-    Script cureenlty not working correctly - needs fixing!
+    Script currently not working correctly - needs fixing!
     """
     moving_wsi_reader = WSIReader.open(input_img=moving_image_path)
     moving_image_rgb = moving_wsi_reader.slide_thumbnail(resolution=out_res, units="power")
     moving_base_mpp = moving_wsi_reader.info.mpp
     moving_base_dims = moving_wsi_reader.slide_dimensions(units='mpp', resolution=moving_base_mpp[0])
     moving_proc_dims = moving_wsi_reader.slide_dimensions(units='power', resolution=out_res)
+    moving_image_level = moving_wsi_reader.info.relative_level_scales(resolution=out_res, units='level')
+    fixed_wsi_reader = WSIReader.open(input_img=fixed_image_path)
+    fixed_image_rgb = fixed_wsi_reader.slide_thumbnail(resolution=out_res, units="power")
     dfbr_transform = np.loadtxt(os.path.join(intermediate_path, "transform.csv"), delimiter=",")
     
     trans = dfbr_transform[0:-1]
@@ -62,6 +67,20 @@ def landmark_registration(landmarks_path, moving_image_path, intermediate_path, 
     
     # create file with columns x_target, y_target and save to output_path (in microns)
     new_locations.to_csv(os.path.join(output_path, "registered_landmarks.csv"), index=False)
+
+    # Plot source landmarks on source image
+    for idx, info in data.iterrows():
+        x = info['x_source'] / (moving_base_mpp[0] * 2**moving_image_level[0][0])
+        y = info['y_source'] / (moving_base_mpp[1] * 2**moving_image_level[0][0])
+        moving_image_rgb = cv2.circle(moving_image_rgb, (int(x), int(y)), radius=5, color=(255, 0, 0), thickness=-1)
+    cv2.imwrite(os.path.join(output_path, "source_landmarks.png"), moving_image_rgb)
+    
+    # Plot registered landmarks on registered image
+    for idx, info in new_locations.iterrows():
+        x = info['he_x']
+        y = info['he_y']
+        moving_image_rgb = cv2.circle(moving_image_rgb, (int(x), int(y)), radius=50, color=(0, 0, 255), thickness=15)
+    cv2.imwrite(os.path.join(output_path, "registered_landmarks.png"), fixed_image_rgb)
 
     gc.collect() 
     print("Finished landmark registration!")
