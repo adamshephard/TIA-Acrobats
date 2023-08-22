@@ -22,8 +22,8 @@ RUN : \
 RUN apt-get install -y gcc
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 RUN apt-get update && apt-get install -y libopenjp2-7-dev libopenjp2-tools openslide-tools
-RUN apt-get update && apt-get install -y python3-opencv
 RUN apt-get update && apt-get install -y libpixman-1-dev
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 
 # Add env to PATH
 RUN python3.8 -m venv /venv
@@ -39,7 +39,7 @@ RUN pip install tqdm
 RUN pip install matplotlib
 RUN pip install segmentation-models-pytorch
 RUN pip install click
-RUN pip install python3-opencv
+# RUN pip install python3-opencv
 
 # RUN apt install nvidia-modprobe -y
 

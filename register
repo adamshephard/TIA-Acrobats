@@ -18,22 +18,22 @@ PATH_IMAGES_DIR="$2"
 PATH_ANNOT_DIR="$3"
 PATH_OUTPUT_DIR="$4"
 
-docker load -i tia-acrobats-algorithm.tar.xz
-docker run -it \
-    --gpus all \
-    -v $PATH_IMAGES_DIR:/input/images \
-    -v $PATH_ANNOT_DIR:/input/annos \
-    -v $PATH_OUTPUT_DIR:/output \
-    -v $PATH_TABLE_CSV:/input/input_table.csv \
-    tia-acrobats
-
+# docker load -i tia-acrobats-algorithm.tar.xz
 # docker run -it \
 #     --gpus all \
 #     -v $PATH_IMAGES_DIR:/input/images \
 #     -v $PATH_ANNOT_DIR:/input/annos \
 #     -v $PATH_OUTPUT_DIR:/output \
 #     -v $PATH_TABLE_CSV:/input/input_table.csv \
-#     tia-acrobats /bin/bash 
+#     tia-acrobats
+
+docker run -it \
+    --gpus all \
+    -v $PATH_IMAGES_DIR:/input/images \
+    -v $PATH_ANNOT_DIR:/input/annos \
+    -v $PATH_OUTPUT_DIR:/output \
+    -v $PATH_TABLE_CSV:/input/input_table.csv \
+    tia-acrobats /bin/bash 
 
 # apply the same transformations to landmarks pointed by column
 # 'landmarks_csv' and save the results in 'path_output'.

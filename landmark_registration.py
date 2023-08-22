@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import pandas as pd
 
-format_for_val = True
+format_for_val = False
 
 @click.command()
 @click.option("--landmarks_path", type=Path, required=True)
