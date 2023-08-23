@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import pandas as pd
 
-format_for_val = False
+format_for_val = True
 
 @click.command()
 @click.option("--landmarks_path", type=Path, required=True)
@@ -21,9 +21,6 @@ format_for_val = False
 @click.option("--out_res", type=float, default=1.25)
 
 def landmark_registration(landmarks_path, moving_image_path, fixed_image_path, intermediate_path, output_path, out_res=1.25):
-    """
-    Script currently not working correctly - needs fixing!
-    """
     moving_wsi_reader = WSIReader.open(input_img=moving_image_path)
     moving_image_rgb = moving_wsi_reader.slide_thumbnail(resolution=out_res, units="power")
     moving_base_mpp = moving_wsi_reader.info.mpp
@@ -39,6 +36,8 @@ def landmark_registration(landmarks_path, moving_image_path, fixed_image_path, i
     scale_factor = moving_base_dims / moving_proc_dims
     trans[:,2] = trans[:,2] * scale_factor
     # Here, [x',y']T = m*x[x,y]T
+
+    # trans = np.array([[1,0,0],[0,1,0]], dtype=np.float) # 2x3 matrix
     
     data = pd.read_csv(landmarks_path)
     

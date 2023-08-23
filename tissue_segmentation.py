@@ -25,8 +25,8 @@ apply_adaptive_thresholding = True
 @click.option("--moving_image_path", type=Path, required=True)
 @click.option("--fixed_image_path", type=Path, required=True)
 @click.option("--output_path", type=Path, required=True)
-@click.option("--resolution", type=float, default=0.1563, required=False)
-def tissue_segmentation(moving_image_path, fixed_image_path, output_path, resolution=0.1563):
+@click.option("--resolution", type=float, default=1.25, required=False)
+def tissue_segmentation(moving_image_path, fixed_image_path, output_path, resolution=1.25):
     fixed_name = os.path.basename(fixed_image_path).split(".")[0]
     moving_name = os.path.basename(moving_image_path).split(".")[0]
     fixed_wsi_reader = WSIReader.open(input_img=fixed_image_path)

@@ -113,7 +113,7 @@ class ACROBATICS(object):
 
         """INIT"""
         info_df = pd.read_csv(self.input_info)
-        info_df = info_df.head(3)
+        # info_df = info_df.head(3)
 
         # Loop through each image in the input folder (must be tif)
         for _, info in info_df.iterrows():

@@ -10,14 +10,6 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib import image as mpimg
 from matplotlib import patches as mpatches
-from matplotlib import colors
-from matplotlib import cm
-from matplotlib import rcParams
-from matplotlib import rc
-from matplotlib import font_manager
-from matplotlib import ticker
-from matplotlib import transforms
-from matplotlib import animation
 
 
 # %%

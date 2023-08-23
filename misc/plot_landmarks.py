@@ -11,7 +11,7 @@ path_wsis_base = '/home/u2271662/tia/projects/acrobat-2023/data/val/wsi'
 path_df = '/home/u2271662/tia/projects/acrobat-2023/data/val/acrobat_validation_points_public_1_of_1.csv'
 reg_out_folder = '/home/u2271662/tia/projects/acrobat-2023/data/val/reg-output-20-08-23-01'
 save_folder = os.path.join(reg_out_folder, 'reg_landmarks')
-level = 1
+level = 2
 
 # FUNCTIONS
 def load_main_landmarks_file(csv_path):
@@ -36,7 +36,7 @@ def add_he_landmarks_to_file(df, reg_out_folder):
         df.loc[(df['anon_id'] == anon_id) & (df['point_id'] == point_id), 'he_y'] = he_y
     return df
 
-def display_landmark_patch(df, patch_size=1000, level=1, limit=10):
+def display_landmark_patch(df, size=1000, level=1, limit=10):
     for i in range(len(df) if limit is None else limit):
         # Get first row of the dataframe (not random)
         row = df.iloc[i]
@@ -122,6 +122,8 @@ def display_wsi_landmarks(df, anon_id, level=1, marker_size=0.25, save_path=None
 
 def export_all_wsi_landmarks(df, level=1, marker_size=0.25, save_path=None):
     for anon_id in df['anon_id'].unique():
+        if anon_id <= 12:
+            continue
         display_wsi_landmarks(df, anon_id, level=level, marker_size=marker_size, save_path=save_path)
 
 # MAIN
