@@ -3,7 +3,11 @@
 
 # Weights
 *.h5
+*.pth
 
 # Outputs
 *.npy
 *.tar.xz
+
+# Bytecode
+*.pyc

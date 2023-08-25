@@ -12,7 +12,6 @@ import gc
 import subprocess
 import pandas as pd
 
-
 def print_std(p: subprocess.Popen):
 
     if p.stderr is not None:
@@ -28,7 +27,7 @@ def run_tissue_segmentation(moving_path, fixed_path, output_path, resolution=0.1
 
     print("Running tissue segmentation")
     cmd = [
-        "python3",
+        "/home/u2271662/miniconda3/envs/tia-02/bin/python",
         "-u",
         "-m",
         "tissue_segmentation",
@@ -47,7 +46,7 @@ def run_registration(moving_path, fixed_path, intermediate_path, output_path, pr
 
     print("running registration")
     cmd = [
-        "python3",
+        "/home/u2271662/miniconda3/envs/tia-02/bin/python",
         "-u",
         "-m",
         "registration",
@@ -63,16 +62,17 @@ def run_registration(moving_path, fixed_path, intermediate_path, output_path, pr
     print_std(p)
     
 @timing
-def run_landmark_registration(landmarks_path, moving_image_path, intermediate_path, output_path, out_res=1.25):
+def run_landmark_registration(landmarks_path, moving_image_path, fixed_image_path, intermediate_path, output_path, out_res=1.25):
 
     print("running landmark registration")
     cmd = [
-        "python3",
+        "/home/u2271662/miniconda3/envs/tia-02/bin/python",
         "-u",
         "-m",
         "landmark_registration",
         f"--landmarks_path={landmarks_path}",
         f"--moving_image_path={moving_image_path}",
+        f"--fixed_image_path={fixed_image_path}",
         f"--intermediate_path={intermediate_path}",
         f"--output_path={output_path}",
         f"--out_res={out_res}",
@@ -97,10 +97,10 @@ class ACROBATICS(object):
     
     # Change below to take input as CSV file...
     
-    def __init__(self, input_registration_info="/data/ACROBAT/data/valid_data/validation_set_table.csv",
-                       image_folder="/data/ACROBAT/data/valid_data/images/",#'/input/images/',
-                       anno_folder="/data/ACROBAT/data/valid_data/annos/",#'/input/images/',
-                       output_folder="/data/ACROBAT/output/valid/",#'/output/'):
+    def __init__(self, input_registration_info="/home/u2271662/tia/projects/acrobat-2023/data/val/validation_set_table.csv",
+                       image_folder="/home/u2271662/tia/projects/acrobat-2023/data/val/wsi",#'/input/images/',
+                       anno_folder="/home/u2271662/tia/projects/acrobat-2023/data/val/annos",#'/input/images/',
+                       output_folder="/home/u2271662/tia/projects/acrobat-2023/data/val/reg-output",#'/output/'):
                        resolution=1.25):
         
         self.input_info = input_registration_info
@@ -112,16 +112,15 @@ class ACROBATICS(object):
     def process(self):
 
         """INIT"""
-
         info_df = pd.read_csv(self.input_info)
-        info_df = info_df.head(3).tail(1)
+        # info_df = info_df.head(3)
 
         # Loop through each image in the input folder (must be tif)
         for _, info in info_df.iterrows():
             moving_path = os.path.join(self.input_images, info['wsi_source'])
-            moving_path = moving_path.replace('.tiff', '.tif') # remember to remove on testing!
+            # moving_path = moving_path.replace('.tiff', '.tif') # remember to remove on testing!
             fixed_path = os.path.join(self.input_images, info['wsi_target'])
-            fixed_path = fixed_path.replace('.tiff', '.tif') # remember to remove on testing!
+            # fixed_path = fixed_path.replace('.tiff', '.tif') # remember to remove on testing!
             landmarks_csv = os.path.join(self.input_annos, info['landmarks_csv'])
             output_dir = os.path.join(self.output_folder, str(info['output_dir_name']))   
 
@@ -137,7 +136,7 @@ class ACROBATICS(object):
                 run_registration(moving_path, fixed_path, intermediate_output_folder, output_dir, out_res=self.resolution)   
                 print('Finished Registration')
                 print('Start CSV Registration')
-                run_landmark_registration(landmarks_csv, moving_path, intermediate_output_folder, output_dir, out_res=self.resolution)
+                run_landmark_registration(landmarks_csv, moving_path, fixed_path, intermediate_output_folder, output_dir, out_res=self.resolution)
 
             except Exception as e:
                 print("Exception")

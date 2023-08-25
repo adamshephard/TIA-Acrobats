@@ -1,7 +1,7 @@
-FROM nvidia/cuda:11.2.0-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04
 
 RUN rm /etc/apt/sources.list.d/cuda.list
-RUN rm /etc/apt/sources.list.d/nvidia-ml.list
+RUN rm -f /etc/apt/sources.list.d/nvidia-ml.list
 
 ENV TZ=Europe/London
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -22,8 +22,8 @@ RUN : \
 RUN apt-get install -y gcc
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 RUN apt-get update && apt-get install -y libopenjp2-7-dev libopenjp2-tools openslide-tools
-RUN apt-get update && apt-get install -y python3-opencv
 RUN apt-get update && apt-get install -y libpixman-1-dev
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 
 # Add env to PATH
 RUN python3.8 -m venv /venv
@@ -39,6 +39,7 @@ RUN pip install tqdm
 RUN pip install matplotlib
 RUN pip install segmentation-models-pytorch
 RUN pip install click
+# RUN pip install python3-opencv
 
 # RUN apt install nvidia-modprobe -y
 
@@ -61,7 +62,7 @@ COPY --chown=algorithm:algorithm registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm landmark_registration.py /opt/algorithm/
 COPY --chown=algorithm:algorithm utils.py /opt/algorithm/
 COPY --chown=algorithm:algorithm wsi_registration_local.py /opt/algorithm/
-
+COPY --chown=algorithm:algorithm models/unet-acrobat-v3-01.pth /opt/algorithm/models/
 
 # ENTRYPOINT python -u -m main $0 $@s
 ENTRYPOINT ["python", "./main.py"]

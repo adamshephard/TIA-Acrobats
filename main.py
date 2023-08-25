@@ -12,7 +12,6 @@ import gc
 import subprocess
 import pandas as pd
 
-
 def print_std(p: subprocess.Popen):
 
     if p.stderr is not None:
@@ -63,7 +62,7 @@ def run_registration(moving_path, fixed_path, intermediate_path, output_path, pr
     print_std(p)
     
 @timing
-def run_landmark_registration(landmarks_path, moving_image_path, intermediate_path, output_path, out_res=1.25):
+def run_landmark_registration(landmarks_path, moving_image_path, fixed_image_path, intermediate_path, output_path, out_res=1.25):
 
     print("running landmark registration")
     cmd = [
@@ -73,6 +72,7 @@ def run_landmark_registration(landmarks_path, moving_image_path, intermediate_pa
         "landmark_registration",
         f"--landmarks_path={landmarks_path}",
         f"--moving_image_path={moving_image_path}",
+        f"--fixed_image_path={fixed_image_path}",
         f"--intermediate_path={intermediate_path}",
         f"--output_path={output_path}",
         f"--out_res={out_res}",
@@ -91,7 +91,6 @@ def delete_tmp_files(tmp_folder):
                 shutil.rmtree(file_path)
         except Exception as e:
             print("Failed to delete %s. Reason: %s" % (file_path, e))
-
 
 class ACROBATICS(object):
        
@@ -117,9 +116,9 @@ class ACROBATICS(object):
         # Loop through each image in the input folder (must be tif)
         for _, info in info_df.iterrows():
             moving_path = os.path.join(self.input_images, info['wsi_source'])
-            moving_path = moving_path.replace('.tiff', '.tif')
+            # moving_path = moving_path.replace('.tiff', '.tif')
             fixed_path = os.path.join(self.input_images, info['wsi_target'])
-            fixed_path = fixed_path.replace('.tiff', '.tif')
+            # fixed_path = fixed_path.replace('.tiff', '.tif')
             landmarks_csv = os.path.join(self.input_annos, info['landmarks_csv'])
             output_dir = os.path.join(self.output_folder, str(info['output_dir_name']))   
 
@@ -135,7 +134,7 @@ class ACROBATICS(object):
                 run_registration(moving_path, fixed_path, intermediate_output_folder, output_dir, out_res=self.resolution)   
                 print('Finished Registration')
                 print('Start CSV Registration')
-                run_landmark_registration(landmarks_csv, moving_path, intermediate_output_folder, output_dir, out_res=self.resolution)
+                run_landmark_registration(landmarks_csv, moving_path, fixed_path, intermediate_output_folder, output_dir, out_res=self.resolution)
                 shutil.rmtree(intermediate_output_folder)
                 print('Finished CSV Registration')
             except Exception as e:
